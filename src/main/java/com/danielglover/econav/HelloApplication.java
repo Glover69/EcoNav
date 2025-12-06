@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
@@ -34,6 +35,7 @@ public class HelloApplication extends Application {
     public static final String navigation = "M237.33,106.21,61.41,41l-.16-.05A16,16,0,0,0,40.9,61.25a1,1,0,0,0,.05.16l65.26,175.92A15.77,15.77,0,0,0,121.28,248h.3a15.77,15.77,0,0,0,15-11.29l.06-.2,21.84-78,78-21.84.2-.06a16,16,0,0,0,.62-30.38ZM149.84,144.3a8,8,0,0,0-5.54,5.54L121.3,232l-.06-.17L56,56l175.82,65.22.16.06Z";
     public static final String route = "M200,168a32.06,32.06,0,0,0-31,24H72a32,32,0,0,1,0-64h96a40,40,0,0,0,0-80H72a8,8,0,0,0,0,16h96a24,24,0,0,1,0,48H72a48,48,0,0,0,0,96h97a32,32,0,1,0,31-40Zm0,48a16,16,0,1,1,16-16A16,16,0,0,1,200,216Z";
     public static final String stops = "M188,88a27.75,27.75,0,0,0-12,2.71V60a28,28,0,0,0-41.36-24.6A28,28,0,0,0,80,44v6.71A27.75,27.75,0,0,0,68,48,28,28,0,0,0,40,76v76a88,88,0,0,0,176,0V116A28,28,0,0,0,188,88Zm12,64a72,72,0,0,1-144,0V76a12,12,0,0,1,24,0v44a8,8,0,0,0,16,0V44a12,12,0,0,1,24,0v68a8,8,0,0,0,16,0V60a12,12,0,0,1,24,0v68.67A48.08,48.08,0,0,0,120,176a8,8,0,0,0,16,0,32,32,0,0,1,32-32,8,8,0,0,0,8-8V116a12,12,0,0,1,24,0Z";
+    public static final String bus = "M184,32H72A32,32,0,0,0,40,64V208a16,16,0,0,0,16,16H80a16,16,0,0,0,16-16V192h64v16a16,16,0,0,0,16,16h24a16,16,0,0,0,16-16V64A32,32,0,0,0,184,32ZM56,176V120H200v56Zm0-96H200v24H56ZM72,48H184a16,16,0,0,1,16,16H56A16,16,0,0,1,72,48Zm8,160H56V192H80Zm96,0V192h24v16Zm-72-60a12,12,0,1,1-12-12A12,12,0,0,1,104,148Zm72,0a12,12,0,1,1-12-12A12,12,0,0,1,176,148Zm72-68v24a8,8,0,0,1-16,0V80a8,8,0,0,1,16,0ZM24,80v24a8,8,0,0,1-16,0V80a8,8,0,0,1,16,0Z";
 
 
     @Override
@@ -51,13 +53,15 @@ public class HelloApplication extends Application {
 
         VBox routeConfig = createRouteConfigPanel();
 
+        VBox vehicleSelection = createVehicleSelectionPanel();
+
 
 
 
 
 
         // Add all sections
-        mainContent.getChildren().addAll(header, routeConfig);
+        mainContent.getChildren().addAll(header, routeConfig, vehicleSelection);
 
         sp.setContent(mainContent);
 
@@ -181,4 +185,70 @@ public class HelloApplication extends Application {
 
         return panel;
     }
+
+
+     public VBox createVehicleSelectionPanel(){
+         VBox panel = new VBox(20);
+         panel.setStyle("-fx-max-width: 100%");
+
+         HBox titleLabel = new HBox(8);
+         titleLabel.setAlignment(Pos.CENTER);
+         Region routeIcon = createSVGIcon(bus, 18, "#12B77F");
+         panel.setStyle("-fx-background-color: white; -fx-padding: 30px;");
+
+         Label sectionTitle = new Label("Select Vehicles to Compare");
+         sectionTitle.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
+
+         titleLabel.getChildren().addAll(routeIcon, sectionTitle);
+
+
+         VBox vehicleSelectionContainer = new VBox(20);
+         vehicleSelectionContainer.setAlignment(Pos.CENTER);
+
+
+         // Rows
+         HBox busRow = new HBox(15);
+         HBox trainRow = new HBox(15);
+
+         // Various vehicle cards
+         VBox electricBusCard = createVehicleCard("Electric Bus", "0.12kg CO2/km", "/images/Bus.png", "#EAFAF5");
+         // VBox dieselBusCard = createVehicleCard();
+         // VBox hybridBusCard = createVehicleCard();
+         // VBox electricTrainCard = createVehicleCard();
+         // VBox dieselTrainCard = createVehicleCard();
+
+         busRow.getChildren().addAll(electricBusCard);
+
+         vehicleSelectionContainer.getChildren().addAll(busRow, trainRow);
+
+         panel.getChildren().addAll(titleLabel, vehicleSelectionContainer);
+
+         return panel;
+     }
+
+
+     public VBox createVehicleCard(String name, String emissionRate, String iconPath, String color){
+        VBox card = new VBox(6);
+        card.setBackground(Background.fill(Color.rgb(234, 250, 245)));
+        card.setStyle("-fx-padding: 20px; -fx-alignment: center; -fx-border-color: #B5E5D2; -fx-border-radius: 8px; -fx-min-width: 150px;");
+
+        CheckBox checkbox = new CheckBox();
+
+        Image img = new Image(Objects.requireNonNull(getClass().getResourceAsStream(iconPath)));
+        ImageView imageView = new ImageView(img);
+        imageView.setFitWidth(40);
+        imageView.setFitHeight(40);
+
+
+        Label vehicleName = new Label(name);
+        vehicleName.setStyle("-fx-font-size: 18px; -fx-font-family: 'Outfit Bold'; -fx-font-weight: bold;");
+
+        Label rate = new Label(emissionRate);
+        rate.setStyle("-fx-font-size: 13px; -fx-text-fill: #6B7280;");
+
+        card.getChildren().addAll(checkbox, imageView, vehicleName, rate);
+
+
+        return card;
+     }
 }
