@@ -1,13 +1,11 @@
 package com.danielglover.econav;
 
+import com.danielglover.econav.logic.*;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
@@ -16,6 +14,8 @@ import javafx.scene.shape.SVGPath;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Objects;
 
 public class HelloApplication extends Application {
@@ -36,6 +36,14 @@ public class HelloApplication extends Application {
     public static final String route = "M200,168a32.06,32.06,0,0,0-31,24H72a32,32,0,0,1,0-64h96a40,40,0,0,0,0-80H72a8,8,0,0,0,0,16h96a24,24,0,0,1,0,48H72a48,48,0,0,0,0,96h97a32,32,0,1,0,31-40Zm0,48a16,16,0,1,1,16-16A16,16,0,0,1,200,216Z";
     public static final String stops = "M188,88a27.75,27.75,0,0,0-12,2.71V60a28,28,0,0,0-41.36-24.6A28,28,0,0,0,80,44v6.71A27.75,27.75,0,0,0,68,48,28,28,0,0,0,40,76v76a88,88,0,0,0,176,0V116A28,28,0,0,0,188,88Zm12,64a72,72,0,0,1-144,0V76a12,12,0,0,1,24,0v44a8,8,0,0,0,16,0V44a12,12,0,0,1,24,0v68a8,8,0,0,0,16,0V60a12,12,0,0,1,24,0v68.67A48.08,48.08,0,0,0,120,176a8,8,0,0,0,16,0,32,32,0,0,1,32-32,8,8,0,0,0,8-8V116a12,12,0,0,1,24,0Z";
     public static final String bus = "M184,32H72A32,32,0,0,0,40,64V208a16,16,0,0,0,16,16H80a16,16,0,0,0,16-16V192h64v16a16,16,0,0,0,16,16h24a16,16,0,0,0,16-16V64A32,32,0,0,0,184,32ZM56,176V120H200v56Zm0-96H200v24H56ZM72,48H184a16,16,0,0,1,16,16H56A16,16,0,0,1,72,48Zm8,160H56V192H80Zm96,0V192h24v16Zm-72-60a12,12,0,1,1-12-12A12,12,0,0,1,104,148Zm72,0a12,12,0,1,1-12-12A12,12,0,0,1,176,148Zm72-68v24a8,8,0,0,1-16,0V80a8,8,0,0,1,16,0ZM24,80v24a8,8,0,0,1-16,0V80a8,8,0,0,1,16,0Z";
+    private static final int CARD_WIDTH = 300;
+
+    private TextField nameField;
+    private TextField distanceField;
+    private TextField stopsField;
+
+    ArrayList<Vehicle> vehicles = new ArrayList<>();
+    TransitRoute routeInputted;
 
 
     @Override
@@ -130,7 +138,7 @@ public class HelloApplication extends Application {
          labelGroupOne.getChildren().addAll(locationLogo, nameLabel);
 
          nameLabel.setStyle("-fx-font-family: 'Inter'; -fx-font-size: 14px;");
-         TextField nameField = new TextField();
+         nameField = new TextField();
          nameField.setStyle("-fx-background-color: white; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #D0D7E3; -fx-border-width: 1.5; -fx-padding: 10 14; -fx-font-size: 14px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 2);");
 
          nameField.setPromptText("e.g., City Center Loop");
@@ -148,7 +156,7 @@ public class HelloApplication extends Application {
          labelGroupTwo.getChildren().addAll(navLogo, distanceLabel);
 
          distanceLabel.setStyle("-fx-font-family: 'Inter'; -fx-font-size: 14px;");
-         TextField distanceField = new TextField();
+         distanceField = new TextField();
          distanceField.setStyle("-fx-background-color: white; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #D0D7E3; -fx-border-width: 1.5; -fx-padding: 10 14; -fx-font-size: 14px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 2);");
 
          distanceField.setPromptText("e.g., 50");
@@ -168,7 +176,7 @@ public class HelloApplication extends Application {
          labelGroupThree.getChildren().addAll(stopsLogo, stopsLabel);
 
          stopsLabel.setStyle("-fx-font-family: 'Inter'; -fx-font-size: 14px;");
-         TextField stopsField = new TextField();
+         stopsField = new TextField();
          stopsField.setStyle("-fx-background-color: white; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #D0D7E3; -fx-border-width: 1.5; -fx-padding: 10 14; -fx-font-size: 14px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 2);");
 
          stopsField.setPromptText("e.g., 12");
@@ -179,7 +187,6 @@ public class HelloApplication extends Application {
          formGroup.getChildren().addAll(inputGroupOne, inputGroupTwo, inputGroupThree);
 
 
-
          panel.getChildren().addAll(titleLabel, formGroup);
 
 
@@ -187,9 +194,12 @@ public class HelloApplication extends Application {
     }
 
 
+
+
+
      public VBox createVehicleSelectionPanel(){
          VBox panel = new VBox(20);
-         panel.setStyle("-fx-max-width: 100%");
+         panel.setStyle("-fx-min-width: 100%; -fx-alignment: center;");
 
          HBox titleLabel = new HBox(8);
          titleLabel.setAlignment(Pos.CENTER);
@@ -201,38 +211,59 @@ public class HelloApplication extends Application {
 
          titleLabel.getChildren().addAll(routeIcon, sectionTitle);
 
-
          VBox vehicleSelectionContainer = new VBox(20);
-         vehicleSelectionContainer.setAlignment(Pos.CENTER);
-
 
          // Rows
          HBox busRow = new HBox(15);
+         busRow.setAlignment(Pos.CENTER);
          HBox trainRow = new HBox(15);
+         trainRow.setAlignment(Pos.CENTER);
 
          // Various vehicle cards
-         VBox electricBusCard = createVehicleCard("Electric Bus", "0.12kg CO2/km", "/images/Bus.png", "#EAFAF5");
-         // VBox dieselBusCard = createVehicleCard();
-         // VBox hybridBusCard = createVehicleCard();
-         // VBox electricTrainCard = createVehicleCard();
-         // VBox dieselTrainCard = createVehicleCard();
+         VBox electricBusCard = createVehicleCard("Electric Bus", "0.12kg CO2/km", 0.12,  "/images/Bus.png", "#EAFAF5", new Bus("Electric", 0.12, 0.12));
+         VBox dieselBusCard = createVehicleCard("Diesel Bus", "0.89kg CO2/km", 0.89, "/images/OncomingBus.png", "", new Bus("Diesel", 0.89, 0.12));
+         VBox hybridBusCard = createVehicleCard("Hybrid Bus", "0.34kg CO2/km", 0.34, "/images/Minibus.png", "", new Bus("Hybrid", 0.34, 0.12));
+         VBox electricTrainCard = createVehicleCard("Electric Train", "0.04kg CO2/km", 0.04, "/images/Train.png", "", new Train("Electric", 0.04, 0.12));
+         VBox dieselTrainCard = createVehicleCard("Diesel Train", "0.65kg CO2/km", 0.65, "/images/Locomotive.png", "", new Train("Diesel", 0.65, 0.12));
 
-         busRow.getChildren().addAll(electricBusCard);
+         busRow.getChildren().addAll(electricBusCard, dieselBusCard, hybridBusCard);
+         trainRow.getChildren().addAll(electricTrainCard, dieselTrainCard);
 
+         Button compareBtn = new Button("Compare Emissions");
+         compareBtn.setStyle("-fx-padding: 12px 16px 12px 16px; -fx-background-color: #178B63; -fx-background-radius: 8; -fx-border-radius: 8; -fx-font-weight: semibold; -fx-font-size: 16px; -fx-font-family: 'Outfit Semibold'; -fx-text-fill: white;");
+
+         compareBtn.setOnAction((event) -> {
+             routeInputted = new TransitRoute(nameField.getText().trim(), Integer.parseInt(distanceField.getText().trim()), Integer.parseInt(stopsField.getText().trim()), vehicles.getFirst());
+
+             // Create comparison
+             EmissionComparison comp = new EmissionComparison(routeInputted);
+
+             comp.compareVehicles2(vehicles);
+             comp.displayComparison();
+         });
+
+         panel.setAlignment(Pos.CENTER);
          vehicleSelectionContainer.getChildren().addAll(busRow, trainRow);
 
-         panel.getChildren().addAll(titleLabel, vehicleSelectionContainer);
+         panel.getChildren().addAll(titleLabel, vehicleSelectionContainer, compareBtn);
 
          return panel;
      }
 
 
-     public VBox createVehicleCard(String name, String emissionRate, String iconPath, String color){
+     public VBox createVehicleCard(String name, String emissionRate, double emissionValue, String iconPath, String color, Vehicle vehicle){
         VBox card = new VBox(6);
+        card.setPrefWidth(CARD_WIDTH);
+        card.setMinWidth(CARD_WIDTH);
+        card.setMaxWidth(CARD_WIDTH);
+
+
+
         card.setBackground(Background.fill(Color.rgb(234, 250, 245)));
-        card.setStyle("-fx-padding: 20px; -fx-alignment: center; -fx-border-color: #B5E5D2; -fx-border-radius: 8px; -fx-min-width: 150px;");
+        card.setStyle("-fx-padding: 20px; -fx-alignment: center; -fx-border-color: #B5E5D2; -fx-background-radius: 8px; -fx-border-radius: 8px;");
 
         CheckBox checkbox = new CheckBox();
+
 
         Image img = new Image(Objects.requireNonNull(getClass().getResourceAsStream(iconPath)));
         ImageView imageView = new ImageView(img);
@@ -248,6 +279,29 @@ public class HelloApplication extends Application {
 
         card.getChildren().addAll(checkbox, imageView, vehicleName, rate);
 
+
+         card.setOnMouseClicked(event -> {
+             checkbox.setSelected(!checkbox.isSelected());
+         });
+
+
+         // We want to use the object for the vehicle being selected and add
+         // it to the array of vehicles to be compared, since it is being selected
+
+         // Else, we remove it from the array (if unchecking)
+
+         checkbox.selectedProperty().addListener((observable, was, is) -> {
+             if (is) {
+                 if (!vehicles.contains(vehicle)) {
+                     vehicles.add(vehicle);
+                     System.out.println("Added: " + vehicle.getVehicleType() + " " + vehicle.getVehicleCategory());
+                 }
+             } else {
+                 // Remove THIS vehicle from comparison list
+                 vehicles.remove(vehicle);
+                 System.out.println("Removed " + vehicle.getVehicleType() + " " + vehicle.getVehicleCategory());
+             }
+         });
 
         return card;
      }
