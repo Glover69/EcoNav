@@ -1,34 +1,184 @@
 package com.danielglover.econav;
 
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.SVGPath;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class HelloApplication extends Application {
-    @Override
-    public void start(Stage stage) throws IOException {
 
-        BorderPane root = createMainLayout();
+    // Helper method for using SVG's
+    private Region createSVGIcon(String svgPath, double size, String color) {
+        Region icon = new Region();
+        icon.setPrefSize(size, size);
+        icon.setMaxSize(size, size);
+        icon.setMinSize(size, size);
+        icon.setStyle(String.format("-fx-shape: \"%s\"; -fx-background-color: %s;", svgPath, color));
+        return icon;
+    }
+
+    public static final String logo = "M224,224H182.94l-6.3-44.12,3.24,1.91a16,16,0,0,0,21.91-5.67l12-20.34a16,16,0,0,0-5.67-21.91l-35-20.61,40.69-69.13a16,16,0,0,0-5.67-21.91l-20.34-12a16,16,0,0,0-21.91,5.67l-20.61,35L76.12,10.22a16,16,0,0,0-21.91,5.67l-12,20.33a16,16,0,0,0,5.67,21.92l35,20.61L42.21,147.88a16,16,0,0,0,5.67,21.91l20.34,12a15.57,15.57,0,0,0,10.58,2L73.06,224H32a8,8,0,0,0,0,16H224a8,8,0,0,0,0-16Zm-24-76.34L188,168l-69.13-40.69,12-20.35ZM179.66,24,200,36l-40.69,69.14L139,93.17ZM56,44.35,68,24,137.14,64.7l-12,20.35ZM76.34,168,56,156,96.69,86.86l20.36,12Zm12.88,56L98,162.8l12.77-21.7L159,169.5l7.79,54.5Z";
+    public static final String location = "M128,64a40,40,0,1,0,40,40A40,40,0,0,0,128,64Zm0,64a24,24,0,1,1,24-24A24,24,0,0,1,128,128Zm0-112a88.1,88.1,0,0,0-88,88c0,31.4,14.51,64.68,42,96.25a254.19,254.19,0,0,0,41.45,38.3,8,8,0,0,0,9.18,0A254.19,254.19,0,0,0,174,200.25c27.45-31.57,42-64.85,42-96.25A88.1,88.1,0,0,0,128,16Zm0,206c-16.53-13-72-60.75-72-118a72,72,0,0,1,144,0C200,161.23,144.53,209,128,222Z";
+    public static final String navigation = "M237.33,106.21,61.41,41l-.16-.05A16,16,0,0,0,40.9,61.25a1,1,0,0,0,.05.16l65.26,175.92A15.77,15.77,0,0,0,121.28,248h.3a15.77,15.77,0,0,0,15-11.29l.06-.2,21.84-78,78-21.84.2-.06a16,16,0,0,0,.62-30.38ZM149.84,144.3a8,8,0,0,0-5.54,5.54L121.3,232l-.06-.17L56,56l175.82,65.22.16.06Z";
+    public static final String route = "M200,168a32.06,32.06,0,0,0-31,24H72a32,32,0,0,1,0-64h96a40,40,0,0,0,0-80H72a8,8,0,0,0,0,16h96a24,24,0,0,1,0,48H72a48,48,0,0,0,0,96h97a32,32,0,1,0,31-40Zm0,48a16,16,0,1,1,16-16A16,16,0,0,1,200,216Z";
+    public static final String stops = "M188,88a27.75,27.75,0,0,0-12,2.71V60a28,28,0,0,0-41.36-24.6A28,28,0,0,0,80,44v6.71A27.75,27.75,0,0,0,68,48,28,28,0,0,0,40,76v76a88,88,0,0,0,176,0V116A28,28,0,0,0,188,88Zm12,64a72,72,0,0,1-144,0V76a12,12,0,0,1,24,0v44a8,8,0,0,0,16,0V44a12,12,0,0,1,24,0v68a8,8,0,0,0,16,0V60a12,12,0,0,1,24,0v68.67A48.08,48.08,0,0,0,120,176a8,8,0,0,0,16,0,32,32,0,0,1,32-32,8,8,0,0,0,8-8V116a12,12,0,0,1,24,0Z";
+
+
+    @Override
+    public void start(Stage stage) {
+
+        ScrollPane sp = new ScrollPane();
+        sp.setFitToWidth(true);
+        sp.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        sp.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+
+        VBox mainContent = new VBox(30); // 30px spacing
+        mainContent.setStyle("-fx-background-color: #F0F5F8");
+
+        VBox header = createTopPanel();
+
+        VBox routeConfig = createRouteConfigPanel();
+
+
+
+
+
+
+        // Add all sections
+        mainContent.getChildren().addAll(header, routeConfig);
+
+        sp.setContent(mainContent);
 
         // Create scene
-        Scene scene = new Scene(root, 1200, 1100);
+        Scene scene = new Scene(sp, 1200, 1100);
 
         stage.setTitle("EcoNav");
         stage.setScene(scene);
         stage.show();
     }
 
-    public BorderPane createMainLayout(){
-        BorderPane borderPane = new BorderPane();
-        borderPane.setStyle("-fx-background-color: #F0F5F8");
+
+
+    public VBox createTopPanel(){
+        VBox main = new VBox(6);
+        main.setStyle("-fx-min-width: 100%; -fx-padding: 22px 12px 22px 12px; -fx-background-color: #178B63; -fx-alignment: center");
+
+        // Content to add to the top panel
+        HBox titleContainer = new HBox(12);
+        titleContainer.setStyle("-fx-alignment: center;");
+
+        // Create SVG path
+        Region icon = createSVGIcon(logo, 20, "#fff");
+
+
+        Label title = new Label("Public Transit Route Eco-Analyzer");
+        title.setStyle("-fx-font-size: 26px; -fx-text-fill: #fff; -fx-font-family: 'Outfit Bold'; -fx-font-weight: bold;");
+
+        Label subTitle = new Label("Compare emissions and find the greenest transit option for your route");
+        subTitle.setStyle("-fx-text-fill: #fff; -fx-font-size: 16px; -fx-alignment: center; -fx-font-family: 'Inter'; -fx-font-weight: regular;");
+
+        titleContainer.getChildren().addAll(icon, title);
+        main.getChildren().addAll(titleContainer, subTitle);
+
+        return main;
+    }
+
+
+     public VBox createRouteConfigPanel(){
+        VBox panel = new VBox(20);
+        panel.setStyle("-fx-max-width: 100%");
+
+
+         HBox titleLabel = new HBox(8);
+         titleLabel.setAlignment(Pos.CENTER);
+         Region routeIcon = createSVGIcon(route, 18, "#12B77F");
+         panel.setStyle("-fx-background-color: white; -fx-padding: 30px;");
+
+         Label sectionTitle = new Label("Route Configuration");
+         sectionTitle.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
+
+         titleLabel.getChildren().addAll(routeIcon, sectionTitle);
+
+         // Form fields
+         HBox formGroup = new HBox(20);
+         formGroup.setStyle("-fx-min-width: 100%; -fx-alignment: center;");
+
+         VBox inputGroupOne = new VBox(4);
+
+         HBox labelGroupOne = new HBox(4);
+
+
+         Region locationLogo = createSVGIcon(location, 15, "#677F77");
+         Label nameLabel = new Label("Route Name:");
+
+         labelGroupOne.getChildren().addAll(locationLogo, nameLabel);
+
+         nameLabel.setStyle("-fx-font-family: 'Inter'; -fx-font-size: 14px;");
+         TextField nameField = new TextField();
+         nameField.setStyle("-fx-background-color: white; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #D0D7E3; -fx-border-width: 1.5; -fx-padding: 10 14; -fx-font-size: 14px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 2);");
+
+         nameField.setPromptText("e.g., City Center Loop");
+
+         inputGroupOne.getChildren().addAll(labelGroupOne, nameField);
+
+
+         VBox inputGroupTwo = new VBox(4);
+         HBox labelGroupTwo = new HBox(4);
+
+
+         Region navLogo = createSVGIcon(navigation, 15, "#677F77");
+         Label distanceLabel = new Label("Distance (km):");
+
+         labelGroupTwo.getChildren().addAll(navLogo, distanceLabel);
+
+         distanceLabel.setStyle("-fx-font-family: 'Inter'; -fx-font-size: 14px;");
+         TextField distanceField = new TextField();
+         distanceField.setStyle("-fx-background-color: white; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #D0D7E3; -fx-border-width: 1.5; -fx-padding: 10 14; -fx-font-size: 14px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 2);");
+
+         distanceField.setPromptText("e.g., 50");
+
+         inputGroupTwo.getChildren().addAll(labelGroupTwo, distanceField);
+
+
+         VBox inputGroupThree = new VBox(4);
+         HBox labelGroupThree = new HBox(4);
+
+         inputGroupThree.setStyle("-fx-min-width: 100%");
+
+
+         Region stopsLogo = createSVGIcon(stops, 15, "#677F77");
+         Label stopsLabel = new Label("Number of Stops:");
+
+         labelGroupThree.getChildren().addAll(stopsLogo, stopsLabel);
+
+         stopsLabel.setStyle("-fx-font-family: 'Inter'; -fx-font-size: 14px;");
+         TextField stopsField = new TextField();
+         stopsField.setStyle("-fx-background-color: white; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #D0D7E3; -fx-border-width: 1.5; -fx-padding: 10 14; -fx-font-size: 14px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 2);");
+
+         stopsField.setPromptText("e.g., 12");
+
+         inputGroupThree.getChildren().addAll(labelGroupThree, stopsField);
+
+
+         formGroup.getChildren().addAll(inputGroupOne, inputGroupTwo, inputGroupThree);
 
 
 
+         panel.getChildren().addAll(titleLabel, formGroup);
 
-        return borderPane;
+
+        return panel;
     }
 }
