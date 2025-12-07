@@ -252,6 +252,11 @@ public class HelloApplication extends Application {
             gen.generateOutput(carModel);
 
             if (!gen.getRes().isEmpty()){
+
+                // Remove the previous result if it exists
+                if (aiResultsBox != null) {
+                    aiSection.getChildren().remove(aiResultsBox);
+                }
                 aiResultsBox = createAIResultCard();
                 panel.getChildren().addAll(aiResultsBox);
             }
@@ -383,17 +388,40 @@ public class HelloApplication extends Application {
 
 
      public VBox createAIResultCard(){
-        AIResponse results = gen.getFormattedRes();
-        VBox panel = new VBox();
-        HBox topPart = new HBox();
 
-        HBox topPartLeft = new HBox();
+
+        AIResponse results = gen.getFormattedRes();
+        VBox panel = new VBox(20);
+        panel.setStyle("-fx-background-color: #ECF7F4; -fx-border-color: #B7E3D0; -fx-padding: 20px; -fx-background-radius: 8px; -fx-border-radius: 8px;");
+        HBox topPart = new HBox();
+        HBox bottomPart = new HBox(30);
+
+        VBox topPartLeft = new VBox(3);
 
 
         Label name = new Label(results.carName);
-        name.setStyle("-fx-font-family: 'Outfit Bold'; -fx-font-weight: 'bold'; -fx-font-size: 15px;");
+        name.setStyle("-fx-font-family: 'Outfit Bold'; -fx-font-weight: bold; -fx-font-size: 18px;");
 
-        panel.getChildren().addAll(name);
+        Label subLabel = new Label("Type: " + " " + results.carType + "  |  " + "Category: " + " " + results.carCategory);
+        subLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #677F77;");
+
+        Region space = new Region();
+        HBox.setHgrow(space, Priority.ALWAYS);
+
+
+        Button addToCompareBtn = new Button("Add to Compare");
+        addToCompareBtn.setStyle("-fx-padding: 12px 16px 12px 16px; -fx-background-color: #178B63; -fx-background-radius: 8; -fx-border-radius: 8; -fx-font-weight: semibold; -fx-font-size: 16px; -fx-font-family: 'Outfit Semibold'; -fx-text-fill: white;");
+
+        Label emissionRate = new Label("Emission Rate: " + results.emissionRate + "kg CO2/km");
+        Label energyCostRate = new Label("Energy Cost Rate: $" + results.energyCost + "/km");
+
+
+
+        topPartLeft.getChildren().addAll(name, subLabel);
+        topPart.getChildren().addAll(topPartLeft, space, addToCompareBtn);
+        bottomPart.getChildren().addAll(emissionRate, energyCostRate);
+
+        panel.getChildren().addAll(topPart, bottomPart);
 
         return panel;
      }
