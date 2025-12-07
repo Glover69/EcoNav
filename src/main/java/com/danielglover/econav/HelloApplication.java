@@ -1,6 +1,7 @@
 package com.danielglover.econav;
 
 import com.danielglover.econav.logic.*;
+import com.danielglover.econav.logic.ai.AIResponse;
 import com.danielglover.econav.logic.ai.GenerateEmissions;
 import javafx.application.Application;
 import javafx.geometry.Pos;
@@ -45,7 +46,9 @@ public class HelloApplication extends Application {
     ArrayList<Vehicle> vehicles = new ArrayList<>();
     TransitRoute routeInputted;
     Button compareBtn;
-    VBox aiResultsBox;
+    private VBox aiSection;
+    private VBox aiResultsBox = null;
+    GenerateEmissions gen = new GenerateEmissions();
 
 
     @Override
@@ -63,7 +66,7 @@ public class HelloApplication extends Application {
 
         VBox routeConfig = createRouteConfigPanel();
 
-        VBox aiPanel = createAIConfigPanel();
+        aiSection = createAIConfigPanel();
 
         VBox vehicleSelection = createVehicleSelectionPanel();
 
@@ -73,7 +76,7 @@ public class HelloApplication extends Application {
 
 
         // Add all sections
-        mainContent.getChildren().addAll(header, routeConfig, aiPanel, vehicleSelection);
+        mainContent.getChildren().addAll(header, routeConfig, aiSection, vehicleSelection);
 
         sp.setContent(mainContent);
 
@@ -209,8 +212,6 @@ public class HelloApplication extends Application {
 
 
     public VBox createAIConfigPanel(){
-        GenerateEmissions gen = new GenerateEmissions();
-
         VBox panel = new VBox(20);
         panel.setStyle("-fx-max-width: 100%");
 
@@ -251,22 +252,18 @@ public class HelloApplication extends Application {
             gen.generateOutput(carModel);
 
             if (!gen.getRes().isEmpty()){
-                gen.getFormattedRes();
+                aiResultsBox = createAIResultCard();
+                panel.getChildren().addAll(aiResultsBox);
             }
         });
 
 
-        aiResultsBox = null;
 
-
-        panel.getChildren().addAll(headerAndSub, inputPlusButton, aiResultsBox);
+        panel.getChildren().addAll(headerAndSub, inputPlusButton);
 
 
         return panel;
     }
-
-
-
 
 
      public VBox createVehicleSelectionPanel(){
@@ -386,12 +383,17 @@ public class HelloApplication extends Application {
 
 
      public VBox createAIResultCard(){
+        AIResponse results = gen.getFormattedRes();
         VBox panel = new VBox();
+        HBox topPart = new HBox();
 
-        Label fullTing = new Label("Hi");
+        HBox topPartLeft = new HBox();
 
 
-        panel.getChildren().addAll(fullTing);
+        Label name = new Label(results.carName);
+        name.setStyle("-fx-font-family: 'Outfit Bold'; -fx-font-weight: 'bold'; -fx-font-size: 15px;");
+
+        panel.getChildren().addAll(name);
 
         return panel;
      }
