@@ -11,6 +11,8 @@ module com.danielglover.econav {
     requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
     requires javafx.graphics;
+    requires java.net.http;
+    requires google.genai;
 
     opens com.danielglover.econav to javafx.fxml;
     exports com.danielglover.econav;

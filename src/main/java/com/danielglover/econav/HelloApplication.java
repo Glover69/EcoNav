@@ -1,8 +1,8 @@
 package com.danielglover.econav;
 
 import com.danielglover.econav.logic.*;
+import com.danielglover.econav.logic.ai.GenerateEmissions;
 import javafx.application.Application;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -10,12 +10,10 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.SVGPath;
 import javafx.stage.Stage;
+import org.kordamp.bootstrapfx.scene.layout.Panel;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Objects;
 
 public class HelloApplication extends Application {
@@ -36,14 +34,18 @@ public class HelloApplication extends Application {
     public static final String route = "M200,168a32.06,32.06,0,0,0-31,24H72a32,32,0,0,1,0-64h96a40,40,0,0,0,0-80H72a8,8,0,0,0,0,16h96a24,24,0,0,1,0,48H72a48,48,0,0,0,0,96h97a32,32,0,1,0,31-40Zm0,48a16,16,0,1,1,16-16A16,16,0,0,1,200,216Z";
     public static final String stops = "M188,88a27.75,27.75,0,0,0-12,2.71V60a28,28,0,0,0-41.36-24.6A28,28,0,0,0,80,44v6.71A27.75,27.75,0,0,0,68,48,28,28,0,0,0,40,76v76a88,88,0,0,0,176,0V116A28,28,0,0,0,188,88Zm12,64a72,72,0,0,1-144,0V76a12,12,0,0,1,24,0v44a8,8,0,0,0,16,0V44a12,12,0,0,1,24,0v68a8,8,0,0,0,16,0V60a12,12,0,0,1,24,0v68.67A48.08,48.08,0,0,0,120,176a8,8,0,0,0,16,0,32,32,0,0,1,32-32,8,8,0,0,0,8-8V116a12,12,0,0,1,24,0Z";
     public static final String bus = "M184,32H72A32,32,0,0,0,40,64V208a16,16,0,0,0,16,16H80a16,16,0,0,0,16-16V192h64v16a16,16,0,0,0,16,16h24a16,16,0,0,0,16-16V64A32,32,0,0,0,184,32ZM56,176V120H200v56Zm0-96H200v24H56ZM72,48H184a16,16,0,0,1,16,16H56A16,16,0,0,1,72,48Zm8,160H56V192H80Zm96,0V192h24v16Zm-72-60a12,12,0,1,1-12-12A12,12,0,0,1,104,148Zm72,0a12,12,0,1,1-12-12A12,12,0,0,1,176,148Zm72-68v24a8,8,0,0,1-16,0V80a8,8,0,0,1,16,0ZM24,80v24a8,8,0,0,1-16,0V80a8,8,0,0,1,16,0Z";
+    public static final String aiLogo = "M224.32,114.24a56,56,0,0,0-60.07-76.57A56,56,0,0,0,67.93,51.44a56,56,0,0,0-36.25,90.32A56,56,0,0,0,69,217,56.39,56.39,0,0,0,83.59,219a55.75,55.75,0,0,0,8.17-.61,56,56,0,0,0,96.31-13.78,56,56,0,0,0,36.25-90.32ZM182.85,54.43a40,40,0,0,1,28.56,48c-.95-.63-1.91-1.24-2.91-1.81L164,74.88a8,8,0,0,0-8,0l-44,25.41V81.81l40.5-23.38A39.76,39.76,0,0,1,182.85,54.43ZM144,137.24l-16,9.24-16-9.24V118.76l16-9.24,16,9.24ZM80,72a40,40,0,0,1,67.53-29c-1,.51-2,1-3,1.62L100,70.27a8,8,0,0,0-4,6.92V128l-16-9.24ZM40.86,86.93A39.75,39.75,0,0,1,64.12,68.57C64.05,69.71,64,70.85,64,72v51.38a8,8,0,0,0,4,6.93l44,25.4L96,165,55.5,141.57A40,40,0,0,1,40.86,86.93ZM73.15,201.57a40,40,0,0,1-28.56-48c.95.63,1.91,1.24,2.91,1.81L92,181.12a8,8,0,0,0,8,0l44-25.41v18.48l-40.5,23.38A39.76,39.76,0,0,1,73.15,201.57ZM176,184a40,40,0,0,1-67.52,29.05c1-.51,2-1.05,3-1.63L156,185.73a8,8,0,0,0,4-6.92V128l16,9.24Zm39.14-14.93a39.75,39.75,0,0,1-23.26,18.36c.07-1.14.12-2.28.12-3.43V132.62a8,8,0,0,0-4-6.93l-44-25.4,16-9.24,40.5,23.38A40,40,0,0,1,215.14,169.07Z";
     private static final int CARD_WIDTH = 300;
 
     private TextField nameField;
     private TextField distanceField;
     private TextField stopsField;
+    private TextField aiField;
 
     ArrayList<Vehicle> vehicles = new ArrayList<>();
     TransitRoute routeInputted;
+    Button compareBtn;
+    VBox aiResultsBox;
 
 
     @Override
@@ -61,6 +63,8 @@ public class HelloApplication extends Application {
 
         VBox routeConfig = createRouteConfigPanel();
 
+        VBox aiPanel = createAIConfigPanel();
+
         VBox vehicleSelection = createVehicleSelectionPanel();
 
 
@@ -69,7 +73,7 @@ public class HelloApplication extends Application {
 
 
         // Add all sections
-        mainContent.getChildren().addAll(header, routeConfig, vehicleSelection);
+        mainContent.getChildren().addAll(header, routeConfig, aiPanel, vehicleSelection);
 
         sp.setContent(mainContent);
 
@@ -139,6 +143,9 @@ public class HelloApplication extends Application {
 
          nameLabel.setStyle("-fx-font-family: 'Inter'; -fx-font-size: 14px;");
          nameField = new TextField();
+         nameField.textProperty().addListener((event) -> {
+             validateAndUpdateButton();
+         });
          nameField.setStyle("-fx-background-color: white; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #D0D7E3; -fx-border-width: 1.5; -fx-padding: 10 14; -fx-font-size: 14px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 2);");
 
          nameField.setPromptText("e.g., City Center Loop");
@@ -157,6 +164,9 @@ public class HelloApplication extends Application {
 
          distanceLabel.setStyle("-fx-font-family: 'Inter'; -fx-font-size: 14px;");
          distanceField = new TextField();
+         distanceField.textProperty().addListener((event) -> {
+             validateAndUpdateButton();
+         });
          distanceField.setStyle("-fx-background-color: white; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #D0D7E3; -fx-border-width: 1.5; -fx-padding: 10 14; -fx-font-size: 14px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 2);");
 
          distanceField.setPromptText("e.g., 50");
@@ -177,6 +187,9 @@ public class HelloApplication extends Application {
 
          stopsLabel.setStyle("-fx-font-family: 'Inter'; -fx-font-size: 14px;");
          stopsField = new TextField();
+         stopsField.textProperty().addListener((event) -> {
+             validateAndUpdateButton();
+         });
          stopsField.setStyle("-fx-background-color: white; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #D0D7E3; -fx-border-width: 1.5; -fx-padding: 10 14; -fx-font-size: 14px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 2);");
 
          stopsField.setPromptText("e.g., 12");
@@ -188,6 +201,65 @@ public class HelloApplication extends Application {
 
 
          panel.getChildren().addAll(titleLabel, formGroup);
+
+
+        return panel;
+    }
+
+
+
+    public VBox createAIConfigPanel(){
+        GenerateEmissions gen = new GenerateEmissions();
+
+        VBox panel = new VBox(20);
+        panel.setStyle("-fx-max-width: 100%");
+
+        VBox headerAndSub = new VBox(5);
+
+        HBox titleLabel = new HBox(8);
+        titleLabel.setAlignment(Pos.CENTER_LEFT);
+        Region routeIcon = createSVGIcon(aiLogo, 18, "#12B77F");
+        panel.setStyle("-fx-background-color: white; -fx-padding: 40px;");
+
+        Label sectionTitle = new Label("AI Vehicle Lookup");
+        sectionTitle.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
+
+        titleLabel.getChildren().addAll(routeIcon, sectionTitle);
+
+        Label subTitle = new Label("Ask AI for the emission rate of any vehicle not in our list");
+        subTitle.setStyle("-fx-font-size: 16px; -fx-alignment: center; -fx-font-family: 'Inter'; -fx-font-weight: regular;");
+
+        headerAndSub.getChildren().addAll(titleLabel, subTitle);
+
+        // Form fields
+        HBox inputPlusButton = new HBox(10);
+
+
+        aiField = new TextField();
+        aiField.setStyle("-fx-background-color: white; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #D0D7E3; -fx-border-width: 1.5; -fx-padding: 10 14; -fx-font-size: 14px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 2);");
+        aiField.setPromptText("e.g., Mercedes Benz E300");
+
+        compareBtn = new Button("Search");
+        compareBtn.setStyle("-fx-padding: 10px 18px 10px 18px; -fx-background-color: #178B63; -fx-background-radius: 8; -fx-border-radius: 8; -fx-font-weight: semibold; -fx-font-size: 14px; -fx-font-family: 'Outfit Semibold'; -fx-text-fill: white;");
+
+        HBox.setHgrow(aiField, Priority.ALWAYS);
+        inputPlusButton.setAlignment(Pos.CENTER_LEFT);
+        inputPlusButton.getChildren().addAll(aiField, compareBtn);
+
+        compareBtn.setOnAction((e) -> {
+            String carModel = aiField.getText().trim();
+            gen.generateOutput(carModel);
+
+            if (!gen.getRes().isEmpty()){
+                gen.getFormattedRes();
+            }
+        });
+
+
+        aiResultsBox = null;
+
+
+        panel.getChildren().addAll(headerAndSub, inputPlusButton, aiResultsBox);
 
 
         return panel;
@@ -229,7 +301,8 @@ public class HelloApplication extends Application {
          busRow.getChildren().addAll(electricBusCard, dieselBusCard, hybridBusCard);
          trainRow.getChildren().addAll(electricTrainCard, dieselTrainCard);
 
-         Button compareBtn = new Button("Compare Emissions");
+         compareBtn = new Button("Compare Emissions");
+         compareBtn.setDisable(true);
          compareBtn.setStyle("-fx-padding: 12px 16px 12px 16px; -fx-background-color: #178B63; -fx-background-radius: 8; -fx-border-radius: 8; -fx-font-weight: semibold; -fx-font-size: 16px; -fx-font-family: 'Outfit Semibold'; -fx-text-fill: white;");
 
          compareBtn.setOnAction((event) -> {
@@ -241,6 +314,9 @@ public class HelloApplication extends Application {
              comp.compareVehicles2(vehicles);
              comp.displayComparison();
          });
+
+
+
 
          panel.setAlignment(Pos.CENTER);
          vehicleSelectionContainer.getChildren().addAll(busRow, trainRow);
@@ -295,14 +371,36 @@ public class HelloApplication extends Application {
                  if (!vehicles.contains(vehicle)) {
                      vehicles.add(vehicle);
                      System.out.println("Added: " + vehicle.getVehicleType() + " " + vehicle.getVehicleCategory());
+                     validateAndUpdateButton();
                  }
              } else {
                  // Remove THIS vehicle from comparison list
                  vehicles.remove(vehicle);
                  System.out.println("Removed " + vehicle.getVehicleType() + " " + vehicle.getVehicleCategory());
+                 validateAndUpdateButton();
              }
          });
 
         return card;
+     }
+
+
+     public VBox createAIResultCard(){
+        VBox panel = new VBox();
+
+        Label fullTing = new Label("Hi");
+
+
+        panel.getChildren().addAll(fullTing);
+
+        return panel;
+     }
+
+     public void validateAndUpdateButton(){
+        if (!nameField.getText().isEmpty() && !distanceField.getText().isEmpty() && !stopsField.getText().isEmpty() && !vehicles.isEmpty()){
+            compareBtn.setDisable(false);
+        }else{
+            compareBtn.setDisable(true);
+        }
      }
 }
