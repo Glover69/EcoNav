@@ -14,10 +14,13 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.kordamp.bootstrapfx.scene.layout.Panel;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Objects;
 
 public class HelloApplication extends Application {
+    ScrollPane sp;
+    VBox mainContent;
 
     // Helper method for using SVG's
     private Region createSVGIcon(String svgPath, double size, String color) {
@@ -36,12 +39,16 @@ public class HelloApplication extends Application {
     public static final String stops = "M188,88a27.75,27.75,0,0,0-12,2.71V60a28,28,0,0,0-41.36-24.6A28,28,0,0,0,80,44v6.71A27.75,27.75,0,0,0,68,48,28,28,0,0,0,40,76v76a88,88,0,0,0,176,0V116A28,28,0,0,0,188,88Zm12,64a72,72,0,0,1-144,0V76a12,12,0,0,1,24,0v44a8,8,0,0,0,16,0V44a12,12,0,0,1,24,0v68a8,8,0,0,0,16,0V60a12,12,0,0,1,24,0v68.67A48.08,48.08,0,0,0,120,176a8,8,0,0,0,16,0,32,32,0,0,1,32-32,8,8,0,0,0,8-8V116a12,12,0,0,1,24,0Z";
     public static final String bus = "M184,32H72A32,32,0,0,0,40,64V208a16,16,0,0,0,16,16H80a16,16,0,0,0,16-16V192h64v16a16,16,0,0,0,16,16h24a16,16,0,0,0,16-16V64A32,32,0,0,0,184,32ZM56,176V120H200v56Zm0-96H200v24H56ZM72,48H184a16,16,0,0,1,16,16H56A16,16,0,0,1,72,48Zm8,160H56V192H80Zm96,0V192h24v16Zm-72-60a12,12,0,1,1-12-12A12,12,0,0,1,104,148Zm72,0a12,12,0,1,1-12-12A12,12,0,0,1,176,148Zm72-68v24a8,8,0,0,1-16,0V80a8,8,0,0,1,16,0ZM24,80v24a8,8,0,0,1-16,0V80a8,8,0,0,1,16,0Z";
     public static final String aiLogo = "M224.32,114.24a56,56,0,0,0-60.07-76.57A56,56,0,0,0,67.93,51.44a56,56,0,0,0-36.25,90.32A56,56,0,0,0,69,217,56.39,56.39,0,0,0,83.59,219a55.75,55.75,0,0,0,8.17-.61,56,56,0,0,0,96.31-13.78,56,56,0,0,0,36.25-90.32ZM182.85,54.43a40,40,0,0,1,28.56,48c-.95-.63-1.91-1.24-2.91-1.81L164,74.88a8,8,0,0,0-8,0l-44,25.41V81.81l40.5-23.38A39.76,39.76,0,0,1,182.85,54.43ZM144,137.24l-16,9.24-16-9.24V118.76l16-9.24,16,9.24ZM80,72a40,40,0,0,1,67.53-29c-1,.51-2,1-3,1.62L100,70.27a8,8,0,0,0-4,6.92V128l-16-9.24ZM40.86,86.93A39.75,39.75,0,0,1,64.12,68.57C64.05,69.71,64,70.85,64,72v51.38a8,8,0,0,0,4,6.93l44,25.4L96,165,55.5,141.57A40,40,0,0,1,40.86,86.93ZM73.15,201.57a40,40,0,0,1-28.56-48c.95.63,1.91,1.24,2.91,1.81L92,181.12a8,8,0,0,0,8,0l44-25.41v18.48l-40.5,23.38A39.76,39.76,0,0,1,73.15,201.57ZM176,184a40,40,0,0,1-67.52,29.05c1-.51,2-1.05,3-1.63L156,185.73a8,8,0,0,0,4-6.92V128l16,9.24Zm39.14-14.93a39.75,39.75,0,0,1-23.26,18.36c.07-1.14.12-2.28.12-3.43V132.62a8,8,0,0,0-4-6.93l-44-25.4,16-9.24,40.5,23.38A40,40,0,0,1,215.14,169.07Z";
+    public static final String trophy = "M232,64H208V48a8,8,0,0,0-8-8H56a8,8,0,0,0-8,8V64H24A16,16,0,0,0,8,80V96a40,40,0,0,0,40,40h3.65A80.13,80.13,0,0,0,120,191.61V216H96a8,8,0,0,0,0,16h64a8,8,0,0,0,0-16H136V191.58c31.94-3.23,58.44-25.64,68.08-55.58H208a40,40,0,0,0,40-40V80A16,16,0,0,0,232,64ZM48,120A24,24,0,0,1,24,96V80H48v32q0,4,.39,8Zm144-8.9c0,35.52-29,64.64-64,64.9a64,64,0,0,1-64-64V56H192ZM232,96a24,24,0,0,1-24,24h-.5a81.81,81.81,0,0,0,.5-8.9V80h24Z";
+    public static final String leaf = "M223.45,40.07a8,8,0,0,0-7.52-7.52C139.8,28.08,78.82,51,52.82,94a87.09,87.09,0,0,0-12.76,49c.57,15.92,5.21,32,13.79,47.85l-19.51,19.5a8,8,0,0,0,11.32,11.32l19.5-19.51C81,210.73,97.09,215.37,113,215.94q1.67.06,3.33.06A86.93,86.93,0,0,0,162,203.18C205,177.18,227.93,116.21,223.45,40.07ZM153.75,189.5c-22.75,13.78-49.68,14-76.71.77l88.63-88.62a8,8,0,0,0-11.32-11.32L65.73,179c-13.19-27-13-54,.77-76.71,22.09-36.47,74.6-56.44,141.31-54.06C210.2,114.89,190.22,167.41,153.75,189.5Z";
     private static final int CARD_WIDTH = 300;
 
     private TextField nameField;
     private TextField distanceField;
     private TextField stopsField;
     private TextField aiField;
+
+    private FlowPane vehicleFlowPane;
 
     ArrayList<Vehicle> vehicles = new ArrayList<>();
     TransitRoute routeInputted;
@@ -50,17 +57,21 @@ public class HelloApplication extends Application {
     private VBox aiResultsBox = null;
     GenerateEmissions gen = new GenerateEmissions();
 
+    EmissionComparison comp;
+    HBox bestOptionContainer;
 
     @Override
     public void start(Stage stage) {
 
-        ScrollPane sp = new ScrollPane();
+
+        sp = new ScrollPane();
+
         sp.setFitToWidth(true);
         sp.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         sp.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 
-        VBox mainContent = new VBox(30); // 30px spacing
-        mainContent.setStyle("-fx-background-color: #F0F5F8");
+        mainContent = new VBox(30); // 30px spacing
+        mainContent.setStyle("-fx-background-color: #F0F5F8; -fx-alignment: center;");
 
         VBox header = createTopPanel();
 
@@ -74,15 +85,15 @@ public class HelloApplication extends Application {
 
 
 
-
         // Add all sections
         mainContent.getChildren().addAll(header, routeConfig, aiSection, vehicleSelection);
+        // mainContent.setStyle("-fx-padding: 0px 0px 20px 0px;");
 
         sp.setContent(mainContent);
 
+
         // Create scene
         Scene scene = new Scene(sp, 1200, 1100);
-
         stage.setTitle("EcoNav");
         stage.setScene(scene);
         stage.show();
@@ -240,14 +251,14 @@ public class HelloApplication extends Application {
         aiField.setStyle("-fx-background-color: white; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #D0D7E3; -fx-border-width: 1.5; -fx-padding: 10 14; -fx-font-size: 14px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 2);");
         aiField.setPromptText("e.g., Mercedes Benz E300");
 
-        compareBtn = new Button("Search");
-        compareBtn.setStyle("-fx-padding: 10px 18px 10px 18px; -fx-background-color: #178B63; -fx-background-radius: 8; -fx-border-radius: 8; -fx-font-weight: semibold; -fx-font-size: 14px; -fx-font-family: 'Outfit Semibold'; -fx-text-fill: white;");
+        Button searchBtn = new Button("Search");
+        searchBtn.setStyle("-fx-padding: 10px 18px 10px 18px; -fx-background-color: #178B63; -fx-background-radius: 8; -fx-border-radius: 8; -fx-font-weight: semibold; -fx-font-size: 14px; -fx-font-family: 'Outfit Semibold'; -fx-text-fill: white;");
 
         HBox.setHgrow(aiField, Priority.ALWAYS);
         inputPlusButton.setAlignment(Pos.CENTER_LEFT);
-        inputPlusButton.getChildren().addAll(aiField, compareBtn);
+        inputPlusButton.getChildren().addAll(aiField, searchBtn);
 
-        compareBtn.setOnAction((e) -> {
+        searchBtn.setOnAction((e) -> {
             String carModel = aiField.getText().trim();
             gen.generateOutput(carModel);
 
@@ -288,10 +299,17 @@ public class HelloApplication extends Application {
          VBox vehicleSelectionContainer = new VBox(20);
 
          // Rows
-         HBox busRow = new HBox(15);
-         busRow.setAlignment(Pos.CENTER);
-         HBox trainRow = new HBox(15);
-         trainRow.setAlignment(Pos.CENTER);
+         // HBox busRow = new HBox(15);
+         // busRow.setAlignment(Pos.CENTER);
+         // HBox trainRow = new HBox(15);
+         // trainRow.setAlignment(Pos.CENTER);
+
+         // New method (FlowPane)
+         vehicleFlowPane = new FlowPane();
+         vehicleFlowPane.setHgap(15);
+         vehicleFlowPane.setVgap(15);
+         vehicleFlowPane.setAlignment(Pos.CENTER);
+
 
          // Various vehicle cards
          VBox electricBusCard = createVehicleCard("Electric Bus", "0.12kg CO2/km", 0.12,  "/images/Bus.png", "#EAFAF5", new Bus("Electric", 0.12, 0.12));
@@ -300,8 +318,11 @@ public class HelloApplication extends Application {
          VBox electricTrainCard = createVehicleCard("Electric Train", "0.04kg CO2/km", 0.04, "/images/Train.png", "", new Train("Electric", 0.04, 0.12));
          VBox dieselTrainCard = createVehicleCard("Diesel Train", "0.65kg CO2/km", 0.65, "/images/Locomotive.png", "", new Train("Diesel", 0.65, 0.12));
 
-         busRow.getChildren().addAll(electricBusCard, dieselBusCard, hybridBusCard);
-         trainRow.getChildren().addAll(electricTrainCard, dieselTrainCard);
+         // busRow.getChildren().addAll(electricBusCard, dieselBusCard, hybridBusCard);
+         // trainRow.getChildren().addAll(electricTrainCard, dieselTrainCard);
+
+         // now add all 5 vehicles to the Flow Pane
+         vehicleFlowPane.getChildren().addAll(electricBusCard, dieselBusCard, hybridBusCard, electricTrainCard, dieselTrainCard);
 
          compareBtn = new Button("Compare Emissions");
          compareBtn.setDisable(true);
@@ -311,17 +332,24 @@ public class HelloApplication extends Application {
              routeInputted = new TransitRoute(nameField.getText().trim(), Integer.parseInt(distanceField.getText().trim()), Integer.parseInt(stopsField.getText().trim()), vehicles.getFirst());
 
              // Create comparison
-             EmissionComparison comp = new EmissionComparison(routeInputted);
+             comp = new EmissionComparison(routeInputted);
 
              comp.compareVehicles2(vehicles);
              comp.displayComparison();
+
+             comp.getBestOption();
+
+             // Remove previous result before showing new one
+             if (bestOptionContainer != null) {
+                 mainContent.getChildren().remove(bestOptionContainer);
+             }
+             bestOptionContainer = createBestOptionPanel(comp.getBestOption());
+             mainContent.getChildren().add(bestOptionContainer);
          });
 
 
-
-
          panel.setAlignment(Pos.CENTER);
-         vehicleSelectionContainer.getChildren().addAll(busRow, trainRow);
+         vehicleSelectionContainer.getChildren().addAll(vehicleFlowPane);
 
          panel.getChildren().addAll(titleLabel, vehicleSelectionContainer, compareBtn);
 
@@ -412,6 +440,12 @@ public class HelloApplication extends Application {
         Button addToCompareBtn = new Button("Add to Compare");
         addToCompareBtn.setStyle("-fx-padding: 12px 16px 12px 16px; -fx-background-color: #178B63; -fx-background-radius: 8; -fx-border-radius: 8; -fx-font-weight: semibold; -fx-font-size: 16px; -fx-font-family: 'Outfit Semibold'; -fx-text-fill: white;");
 
+        addToCompareBtn.setOnAction(a -> {
+            VBox newCard = createVehicleCard(results.carName, (results.emissionRate) + "kg CO2/km", results.emissionRate, "/images/Bus.png", "", new Car(results.carType, results.emissionRate, results.energyCost, results.carCategory));
+            vehicleFlowPane.getChildren().add(newCard);
+            clearAIResults();
+        });
+
         Label emissionRate = new Label("Emission Rate: " + results.emissionRate + "kg CO2/km");
         Label energyCostRate = new Label("Energy Cost Rate: $" + results.energyCost + "/km");
 
@@ -433,4 +467,77 @@ public class HelloApplication extends Application {
             compareBtn.setDisable(true);
         }
      }
+
+    private void clearAIResults() {
+        if (aiResultsBox != null) {
+            aiSection.getChildren().remove(aiResultsBox);
+            aiResultsBox = null;
+        }
+    }
+
+
+
+
+    // Comparison Results
+
+    public HBox createBestOptionPanel(ComparisonResult bestOption){
+        HBox panel = new HBox();
+        DecimalFormat df = new DecimalFormat();
+
+        panel.setStyle("-fx-padding: 25px; -fx-background-color: #14A072; -fx-border-radius: 8px; -fx-background-radius: 8px;");
+        panel.prefWidthProperty().bind(sp.widthProperty().multiply(0.80));
+        panel.setMaxWidth(Region.USE_PREF_SIZE);
+
+        VBox leftPart = new VBox(12);
+
+        HBox champTag = new HBox(5);
+        champTag.setAlignment(Pos.CENTER_LEFT);
+
+        Region champIcon = createSVGIcon(trophy, 18, "#fff");
+        Label bestOptionlLabel = new Label("Best Option");
+        bestOptionlLabel.setStyle("-fx-text-fill: '#fff'; -fx-font-size: 16px;");
+
+        champTag.getChildren().addAll(champIcon, bestOptionlLabel);
+
+        Label title = new Label(bestOption.getVehicleType());
+        title.setStyle("-fx-text-fill: #fff; -fx-font-size: 24px; -fx-font-family: 'Outfit Bold'; -fx-font-weight: bold;");
+
+        HBox statsRow = new HBox(20);
+
+        HBox firstStat = new HBox(5);
+        Region leafIcon = createSVGIcon(leaf, 18, "#fff");
+        Label firstStatLabel = new Label(bestOption.getTotalEmissions() + " kg CO2");
+        firstStatLabel.setStyle("-fx-text-fill: #fff; -fx-font-size: 14px;");
+        firstStat.getChildren().addAll(leafIcon, firstStatLabel);
+
+        Label secondStatLabel = new Label("GHS " + bestOption.getEnergyCost() + " energy cost");
+        secondStatLabel.setStyle("-fx-text-fill: #fff; -fx-font-size: 14px;");
+
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+
+        VBox rightPart = new VBox(5);
+
+        Label savingsValue = new Label(  df.format(bestOption.getSavings()) + " kg");
+        savingsValue.setStyle("-fx-text-fill: #fff; -fx-font-size: 24px; -fx-font-family: 'Outfit Bold'; -fx-font-weight: bold;");
+
+        Label savingsDesc = new Label("CO₂ saved vs worst");
+        savingsDesc.setStyle("-fx-text-fill: #fff; -fx-font-size: 14px");
+
+        rightPart.setAlignment(Pos.TOP_RIGHT);
+        rightPart.getChildren().addAll(savingsValue, savingsDesc);
+
+
+        statsRow.getChildren().addAll(firstStat, secondStatLabel);
+
+        leftPart.getChildren().addAll(champTag, title, statsRow);
+
+
+
+        panel.getChildren().addAll(leftPart, spacer, rightPart);
+        panel.setAlignment(Pos.CENTER);
+
+        return panel;
+    }
 }
