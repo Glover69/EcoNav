@@ -211,7 +211,7 @@ public class HelloApplication extends Application {
          inputGroupThree.getChildren().addAll(labelGroupThree, stopsField);
 
 
-         formGroup.getChildren().addAll(inputGroupOne, inputGroupTwo, inputGroupThree);
+         formGroup.getChildren().addAll(inputGroupOne, inputGroupTwo);
 
 
          panel.getChildren().addAll(titleLabel, formGroup);
@@ -277,7 +277,6 @@ public class HelloApplication extends Application {
 
         panel.getChildren().addAll(headerAndSub, inputPlusButton);
 
-
         return panel;
     }
 
@@ -329,7 +328,7 @@ public class HelloApplication extends Application {
          compareBtn.setStyle("-fx-padding: 12px 16px 12px 16px; -fx-background-color: #178B63; -fx-background-radius: 8; -fx-border-radius: 8; -fx-font-weight: semibold; -fx-font-size: 16px; -fx-font-family: 'Outfit Semibold'; -fx-text-fill: white;");
 
          compareBtn.setOnAction((event) -> {
-             routeInputted = new TransitRoute(nameField.getText().trim(), Integer.parseInt(distanceField.getText().trim()), Integer.parseInt(stopsField.getText().trim()), vehicles.getFirst());
+             routeInputted = new TransitRoute(nameField.getText().trim(), Integer.parseInt(distanceField.getText().trim()), vehicles.getFirst());
 
              // Create comparison
              comp = new EmissionComparison(routeInputted);
@@ -417,7 +416,6 @@ public class HelloApplication extends Application {
 
      public VBox createAIResultCard(){
 
-
         AIResponse results = gen.getFormattedRes();
         VBox panel = new VBox(20);
         panel.setStyle("-fx-background-color: #ECF7F4; -fx-border-color: #B7E3D0; -fx-padding: 20px; -fx-background-radius: 8px; -fx-border-radius: 8px;");
@@ -441,7 +439,7 @@ public class HelloApplication extends Application {
         addToCompareBtn.setStyle("-fx-padding: 12px 16px 12px 16px; -fx-background-color: #178B63; -fx-background-radius: 8; -fx-border-radius: 8; -fx-font-weight: semibold; -fx-font-size: 16px; -fx-font-family: 'Outfit Semibold'; -fx-text-fill: white;");
 
         addToCompareBtn.setOnAction(a -> {
-            VBox newCard = createVehicleCard(results.carName, (results.emissionRate) + "kg CO2/km", results.emissionRate, "/images/Bus.png", "", new Car(results.carType, results.emissionRate, results.energyCost, results.carCategory));
+            VBox newCard = createVehicleCard(results.carName, (results.emissionRate) + "kg CO2/km", results.emissionRate, "/images/Automobile.png", "", new Car(results.carName, results.carType, results.emissionRate, results.energyCost, results.carCategory));
             vehicleFlowPane.getChildren().add(newCard);
             clearAIResults();
         });
@@ -461,7 +459,7 @@ public class HelloApplication extends Application {
      }
 
      public void validateAndUpdateButton(){
-        if (!nameField.getText().isEmpty() && !distanceField.getText().isEmpty() && !stopsField.getText().isEmpty() && !vehicles.isEmpty()){
+        if (!nameField.getText().isEmpty() && !distanceField.getText().isEmpty() && !vehicles.isEmpty()){
             compareBtn.setDisable(false);
         }else{
             compareBtn.setDisable(true);
@@ -506,11 +504,11 @@ public class HelloApplication extends Application {
 
         HBox firstStat = new HBox(5);
         Region leafIcon = createSVGIcon(leaf, 18, "#fff");
-        Label firstStatLabel = new Label(bestOption.getTotalEmissions() + " kg CO2");
+        Label firstStatLabel = new Label(df.format(bestOption.getTotalEmissions()) + " kg CO2");
         firstStatLabel.setStyle("-fx-text-fill: #fff; -fx-font-size: 14px;");
         firstStat.getChildren().addAll(leafIcon, firstStatLabel);
 
-        Label secondStatLabel = new Label("GHS " + bestOption.getEnergyCost() + " energy cost");
+        Label secondStatLabel = new Label("$ " + df.format(bestOption.getEnergyCost()) + " energy cost");
         secondStatLabel.setStyle("-fx-text-fill: #fff; -fx-font-size: 14px;");
 
         Region spacer = new Region();
@@ -519,7 +517,7 @@ public class HelloApplication extends Application {
 
         VBox rightPart = new VBox(5);
 
-        Label savingsValue = new Label(  df.format(bestOption.getSavings()) + " kg");
+        Label savingsValue = new Label(df.format(bestOption.getSavings()) + " kg");
         savingsValue.setStyle("-fx-text-fill: #fff; -fx-font-size: 24px; -fx-font-family: 'Outfit Bold'; -fx-font-weight: bold;");
 
         Label savingsDesc = new Label("CO₂ saved vs worst");

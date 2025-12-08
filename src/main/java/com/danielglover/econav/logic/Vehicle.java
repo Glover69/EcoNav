@@ -1,9 +1,15 @@
 package com.danielglover.econav.logic;
 
 public abstract class Vehicle {
+    protected String vehicleName;
     protected String vehicleType;
     protected Double emissionRate;
     protected Double energyCostPerKm;
+
+    public Vehicle(String vehicleName, String vehicleType, Double emissionRate, Double energyCostPerKm){
+        this(vehicleType, emissionRate, energyCostPerKm);
+        this.vehicleName = vehicleName;
+    }
 
     public Vehicle(String vehicleType, Double emissionRate, Double energyCostPerKm){
         setVehicleType(vehicleType);

@@ -11,7 +11,7 @@ public class TestDriver {
         Bus hybridBus = new Bus("Hybrid", 0.55, 0.20);
 
         // Create route
-        TransitRoute cityRoute = new TransitRoute("City Center", 50, 12, electricBus);
+        TransitRoute cityRoute = new TransitRoute("City Center", 50, electricBus);
 
         // Create comparison
         EmissionComparison comparison = new EmissionComparison(cityRoute);

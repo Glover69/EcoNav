@@ -13,10 +13,10 @@ public class TransitRoute {
     // Constructors
     public TransitRoute(){}
 
-    public TransitRoute(String routeName, double distance, int numberOfStops, Vehicle vehicle){
+    public TransitRoute(String routeName, double distance, Vehicle vehicle){
         this.routeName = routeName;
         this.distance = distance;
-        this.numberOfStops = numberOfStops;
+        // this.numberOfStops = numberOfStops;
         this.vehicle = vehicle;
     }
 

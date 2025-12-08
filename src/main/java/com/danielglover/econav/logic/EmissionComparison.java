@@ -51,7 +51,15 @@ public class EmissionComparison {
 
             double savings = baseEmissions - emissions;
 
-            String thisParticularVehicle = v.getVehicleType() + " " + v.getVehicleCategory();
+            String thisParticularVehicle;
+
+            if (v.vehicleName == null){
+                thisParticularVehicle = v.getVehicleType() + " " + v.getVehicleCategory();
+            }else{
+                thisParticularVehicle = v.vehicleName;
+            }
+
+
 
             // Create the result object and store it in the list
             ComparisonResult res = new ComparisonResult(thisParticularVehicle, emissions, energyCost, savings);

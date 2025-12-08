@@ -9,6 +9,7 @@ public class ComparisonResult {
     private Double savings;
 
     // Constructor
+
     public ComparisonResult(String vehicleType, Double totalEmissions, Double energyCost, Double savings){
         setVehicleType(vehicleType);
         setTotalEmissions(totalEmissions);

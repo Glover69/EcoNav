@@ -3,8 +3,9 @@ package com.danielglover.econav.logic;
 public class Car extends Vehicle{
     private String vehicleCategory;
 
-    public Car(String vehicleType, Double emissionRate, Double energyCostPerKm, String category){
-        super(vehicleType, emissionRate, energyCostPerKm);
+    public Car(String vehicleName, String vehicleType, Double emissionRate, Double energyCostPerKm, String category){
+        super(vehicleName, vehicleType, emissionRate, energyCostPerKm);
+        this.vehicleCategory = category;
     }
 
     public String getVehicleCategory(){
