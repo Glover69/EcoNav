@@ -12,7 +12,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import org.kordamp.bootstrapfx.scene.layout.Panel;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -32,6 +31,7 @@ public class HelloApplication extends Application {
         return icon;
     }
 
+    // SVG paths for the application
     public static final String logo = "M224,224H182.94l-6.3-44.12,3.24,1.91a16,16,0,0,0,21.91-5.67l12-20.34a16,16,0,0,0-5.67-21.91l-35-20.61,40.69-69.13a16,16,0,0,0-5.67-21.91l-20.34-12a16,16,0,0,0-21.91,5.67l-20.61,35L76.12,10.22a16,16,0,0,0-21.91,5.67l-12,20.33a16,16,0,0,0,5.67,21.92l35,20.61L42.21,147.88a16,16,0,0,0,5.67,21.91l20.34,12a15.57,15.57,0,0,0,10.58,2L73.06,224H32a8,8,0,0,0,0,16H224a8,8,0,0,0,0-16Zm-24-76.34L188,168l-69.13-40.69,12-20.35ZM179.66,24,200,36l-40.69,69.14L139,93.17ZM56,44.35,68,24,137.14,64.7l-12,20.35ZM76.34,168,56,156,96.69,86.86l20.36,12Zm12.88,56L98,162.8l12.77-21.7L159,169.5l7.79,54.5Z";
     public static final String location = "M128,64a40,40,0,1,0,40,40A40,40,0,0,0,128,64Zm0,64a24,24,0,1,1,24-24A24,24,0,0,1,128,128Zm0-112a88.1,88.1,0,0,0-88,88c0,31.4,14.51,64.68,42,96.25a254.19,254.19,0,0,0,41.45,38.3,8,8,0,0,0,9.18,0A254.19,254.19,0,0,0,174,200.25c27.45-31.57,42-64.85,42-96.25A88.1,88.1,0,0,0,128,16Zm0,206c-16.53-13-72-60.75-72-118a72,72,0,0,1,144,0C200,161.23,144.53,209,128,222Z";
     public static final String navigation = "M237.33,106.21,61.41,41l-.16-.05A16,16,0,0,0,40.9,61.25a1,1,0,0,0,.05.16l65.26,175.92A15.77,15.77,0,0,0,121.28,248h.3a15.77,15.77,0,0,0,15-11.29l.06-.2,21.84-78,78-21.84.2-.06a16,16,0,0,0,.62-30.38ZM149.84,144.3a8,8,0,0,0-5.54,5.54L121.3,232l-.06-.17L56,56l175.82,65.22.16.06Z";
@@ -70,7 +70,7 @@ public class HelloApplication extends Application {
         sp.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         sp.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 
-        mainContent = new VBox(30); // 30px spacing
+        mainContent = new VBox(30);
         mainContent.setStyle("-fx-background-color: #F0F5F8; -fx-alignment: center;");
 
         VBox header = createTopPanel();
@@ -224,6 +224,8 @@ public class HelloApplication extends Application {
 
     public VBox createAIConfigPanel(){
         VBox panel = new VBox(20);
+        panel.prefWidthProperty().bind(sp.widthProperty().multiply(0.80));
+        panel.setMaxWidth(Region.USE_PREF_SIZE);
         panel.setStyle("-fx-max-width: 100%");
 
         VBox headerAndSub = new VBox(5);
@@ -231,7 +233,7 @@ public class HelloApplication extends Application {
         HBox titleLabel = new HBox(8);
         titleLabel.setAlignment(Pos.CENTER_LEFT);
         Region routeIcon = createSVGIcon(aiLogo, 18, "#12B77F");
-        panel.setStyle("-fx-background-color: white; -fx-padding: 40px;");
+        panel.setStyle("-fx-background-color: white; -fx-padding: 40px; -fx-background-radius: 8px; -fx-border-radius: 8px;");
 
         Label sectionTitle = new Label("AI Vehicle Lookup");
         sectionTitle.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");

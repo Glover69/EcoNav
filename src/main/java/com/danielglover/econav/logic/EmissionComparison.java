@@ -4,10 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EmissionComparison {
-
     private TransitRoute route;
     private ArrayList<ComparisonResult> results;
-
 
 
     public EmissionComparison(TransitRoute route){
@@ -15,19 +13,6 @@ public class EmissionComparison {
         this.results = new ArrayList<>();
     }
 
-    // public void compareVehicles(List vehicle){
-    //     double distance = route.getDistance();
-//
-    //     for (int i = 0; i < vehicle.size(); i++){
-    //         Vehicle transport = vehicle.get(i);
-//
-    //         double emissionRate = TransitRoute.getCalculateEmissions(transport);
-    //         double totalEmission = TransitRoute.getCalculateTotalEmissions(transport);
-//
-    //         results.add(new ComparisonResult(transport.getVehicleType(), totalEmission));
-    //     }
-//
-    // }
 
     // Comparing different vehicles on one route
     public void compareVehicles2(List<Vehicle> vehicles){
@@ -69,51 +54,6 @@ public class EmissionComparison {
         System.out.println("Comparison complete. " + results.size() + " vehicles analyzed.");
     }
 
-
-    // Compare one vehicle on various routes
-
-    public void compareRoutes(List<TransitRoute> routes){
-        results.clear();
-
-        // Set the first vehicle as the one being compared to
-        double baseEmissions = 0;
-        if (!routes.isEmpty()){
-            baseEmissions = routes.getFirst().calculateTotalEmissions();
-        }
-
-        for (TransitRoute routeToCompare: routes){
-            // Calculate both emissions and energy cost for this particular route
-            double emissions = routeToCompare.calculateTotalEmissions();
-            double energyCost = routeToCompare.calculateTotalEnergyCost();
-
-            double savings = baseEmissions - emissions;
-
-            // Note down this route and the car passing on it
-            String thisParticularRoute = routeToCompare.getRouteName() + " (" + routeToCompare.getVehicle().getVehicleType() + ") ";
-
-            // Create the result object and store it in the list
-            ComparisonResult res = new ComparisonResult(thisParticularRoute, emissions, energyCost, savings);
-            results.add(res);
-        }
-
-        System.out.println("Comparison complete. " + results.size() + " routes analyzed.");
-    }
-
-
-
-    // public void compareRoutes(List<TransitRoute> route){
-//
-    //     for (int i = 0; i < route.size(); i++ ){
-    //         TransitRoute route = routes.get(i);
-//
-    //         double emissionRate = TransitRoute.getEmissions(transport);
-    //         double totalEmission = TransitRoute.getTotalEmissions(transport);
-//
-    //         results.add(new ComparisonResult(transport.getVehicleType(), totalEmission));
-//
-    //     }
-//
-    // }
 
     public void displayComparison(){
         if (results.isEmpty()){
@@ -162,38 +102,11 @@ public class EmissionComparison {
         return best;
     }
 
-    public double calculateMaxSavings(){
-        if (results.isEmpty()){
-            return 0;
-        }
-
-        // Find highest and lowest emissions
-        double maxEmissions = results.getFirst().getTotalEmissions();
-        double minEmissions = results.getFirst().getTotalEmissions();
-
-        for (ComparisonResult res: results){
-            double em = res.getTotalEmissions();
-
-            if (em > maxEmissions){
-                maxEmissions = em;
-            }
-
-            if (em < minEmissions){
-                minEmissions = em;
-            }
-        }
-
-
-        return maxEmissions - minEmissions;
-    }
 
     public ArrayList<ComparisonResult> getResults() {
         return results;
     }
 
-    public TransitRoute getRoute() {
-        return route;
-    }
 
     public void setRoute(TransitRoute route) {
         this.route = route;
