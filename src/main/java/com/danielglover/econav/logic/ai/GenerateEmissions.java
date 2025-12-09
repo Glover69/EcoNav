@@ -7,7 +7,7 @@ public class GenerateEmissions {
     private String res;
 
     public void generateOutput(String carModel){
-        Client client = Client.builder().apiKey("AIzaSyA-WwlbGylgLMNrATkqv9hb4-xb3VFor5A").build();
+        Client client = Client.builder().apiKey("INSERT API KEY HERE").build();
 
         GenerateContentResponse response =
                 client.models.generateContent(
